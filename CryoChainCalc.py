@@ -16,6 +16,9 @@ d = schem.Drawing() # initialize schematic
 nParams = 5 # number of parameters for each component stored in array p
 p = np.zeros(nParams) # initialize component parameter array p
 plt.ion()
+
+global direction
+direction = 'right'
 ##########################
 # Amplifier function
 ##########################
@@ -62,7 +65,7 @@ def addAmp(T,G,S=0.,p=0):
 			p[-1][-1] = NSD    
 			Gprod = np.prod(Gc[:i+1])
 		# draw component and label with params S, T, G, P, NSD
-		a1 = d.add(e.AMP,d = 'right')
+		a1 = d.add(e.AMP,d = direction)
 		a1.add_label("Amp",loc='top')
 		a1.add_label("S [dBm]: "+str(round(S,4)),loc='bot')
 		a1.add_label("T [K]: "+str(round(T,4)),loc='bot',ofst=1.0)
@@ -71,7 +74,7 @@ def addAmp(T,G,S=0.,p=0):
 		a1.add_label("Tcas [K]: "+str(round(Tf,4)),loc='bot',ofst=4.0)
 		a1.add_label("T_N [K]: "+str(round(Tf*Gprod,4)),loc='bot',ofst=5.0)
 		#a1.add_label("NSD [dBm/Hz]: "+str(round(NSD,2)),loc='bot',ofst=5.0)
-		d.add(e.LINE, d='right', l=5)
+		d.add(e.LINE, d=direction, l=5)
 		return p
 
 ##########################
@@ -136,7 +139,7 @@ def addAtten(T,A,ntones=1000,S=0.,p=0):
 			a1.add_label("%i tone P_diss [uW]: "%ntones+str(round(Pd*1e6,2)),loc='bot',ofst=6.7)
 		
 		#a1.add_label("NSD [dBm/Hz]: "+str(round(NSD,2)),loc='bot',ofst=5.0)
-		d.add(e.LINE, d='right', l=5)
+		d.add(e.LINE, d=direction, l=5)
 		return p
 
 ##########################
@@ -191,7 +194,7 @@ def addCable(Tin,Tout,L,fin, ntones=1000, ctype="SC-086/50-SS-SS",S=0.0,p=0):
 			p[-1][4] = NSD
 			Gprod = np.prod(Gc[:i+1])
 		# draw component and label with params S, T, G, P, Tcas, NSD
-		a1 = d.add(e.CABLE, d='right')
+		a1 = d.add(e.CABLE, d=direction)
 		a1.add_label(ctype+" Cable",loc='top')
 		a1.add_label("S [dBm]: "+str(round(S,4)),loc='bot')
 		a1.add_label("(%.2fK-%.2fK), Tavg [K]: "%(Tin,Tout)+str(round(T,2)),loc='bot',ofst=1.0)
@@ -220,7 +223,7 @@ def addCable(Tin,Tout,L,fin, ntones=1000, ctype="SC-086/50-SS-SS",S=0.0,p=0):
 			a1.add_label("Thermal @ %.2f [uW]: "%(min(Tin,Tout))+str(round(therm*1e6,2)),loc='bot',ofst=8.0)
 		else:
 			a1.add_label("Thermal @ %.2f [nW]: "%(min(Tin,Tout))+str(round(therm*1e9,2)),loc='bot',ofst=8.0)
-		d.add(e.LINE, d='right', l=5)
+		d.add(e.LINE, d=direction, l=5)
 		return p
 
 ##########################
@@ -316,7 +319,7 @@ def addCableOptimized(Tin, Tout, Lmin, Lmax, fin, ntones=1000, ctype="SC-086/50-
 			p[-1][4] = NSD
 			Gprod = np.prod(Gc[:i+1])
 		# draw component and label with params S, T, G, P, Tcas, NSD
-		a1 = d.add(e.CABLE, d='right')
+		a1 = d.add(e.CABLE, d=direction)
 		a1.add_label(ctype+" Cable",loc='top')
 		a1.add_label("S [dBm]: "+str(round(S,4)),loc='bot')
 		a1.add_label("(%.2fK-%.2fK), Tavg [K]: "%(Tin,Tout)+str(round(T,2)),loc='bot',ofst=1.0)
@@ -350,20 +353,24 @@ def addCableOptimized(Tin, Tout, Lmin, Lmax, fin, ntones=1000, ctype="SC-086/50-
 			a1.add_label("Thermal @ %.2f [uW]: "%(min(Tin,Tout))+str(round(therm*1e6,2)),loc='bot',ofst=8.0)
 		else:
 			a1.add_label("Thermal @ %.2f [nW]: "%(min(Tin,Tout))+str(round(therm*1e9,2)),loc='bot',ofst=8.0)
-		d.add(e.LINE, d='right', l=5)
+		d.add(e.LINE, d=direction, l=5)
 		return p
 
 
 def addLEKID(arrayName):
-		"""
-		Params:
-		arrayName: String of LEKID array
-		"""
-		# draw component and label
-		a1 = d.add(e.LEKID,d = 'right')
-		a1.add_label(arrayName,loc='top')
-		d.add(e.LINE, d='right', l=4)
-		return
+    """
+    Params:
+    arrayName: String of LEKID array
+    """
+    # draw component and label
+    d.add(e.LINE, d='down', l=6)
+    a1 = d.add(e.LEKID,d = 'down')
+    a1.add_label(arrayName,loc='rgt')
+    d.add(e.LINE, d='down', l=6)
+    d.add(e.LINE, d='left', l=4)
+    global direction
+    direction = 'left'
+    return
 
 def addSource(T,S=0.):		###Place first
 		"""
@@ -385,6 +392,6 @@ def addSource(T,S=0.):		###Place first
 		a1.add_label("T [K]: "+str(round(T,4)),loc='bot',ofst=1.0)
 		a1.add_label("P [dBm]: "+str(round(P,4)),loc='bot',ofst=3.0)
 		a1.add_label("Tcas [K]: "+str(round(Tf,4)),loc='bot',ofst=4.0)
-		d.add(e.LINE, d='right', l=5)
+		d.add(e.LINE, d=direction, l=5)
 		return p
 
